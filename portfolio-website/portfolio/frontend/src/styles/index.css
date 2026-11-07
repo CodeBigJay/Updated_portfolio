@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-bg text-ink font-body antialiased;
+}
+
+::selection {
+  background: #4fd1c5;
+  color: #0a1018;
+}
+
+/* Keyboard focus visibility, kept even under custom outlines removed elsewhere */
+:focus-visible {
+  outline: 2px solid #4fd1c5;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.blueprint-bg {
+  background-image: linear-gradient(rgba(79, 209, 197, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 209, 197, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.route-label {
+  @apply font-mono text-xs tracking-wider text-trace uppercase;
+}
+
+.route-label::before {
+  content: '// ';
+  color: #7e8ba3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
