@@ -4,21 +4,11 @@ export interface D1Statement {
   run(): Promise<{ meta: { changes: number } }>;
 }
 export interface D1Database { prepare(query: string): D1Statement; }
-export interface R2ObjectBody {
-  body: ReadableStream;
-  httpEtag: string;
-  writeHttpMetadata(headers: Headers): void;
-}
-export interface R2Bucket {
-  put(key: string, value: ArrayBuffer, options?: { httpMetadata?: { contentType?: string; cacheControl?: string }; customMetadata?: Record<string, string> }): Promise<unknown>;
-  get(key: string): Promise<R2ObjectBody | null>;
-  delete(key: string): Promise<void>;
-}
 export interface Env {
   DB: D1Database;
-  PROJECT_FILES: R2Bucket;
   ADMIN_PASSWORD: string;
   SESSION_SECRET: string;
+  GITHUB_TOKEN: string;
 }
 export interface Context { request: Request; env: Env; params: Record<string, string>; }
 export const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
