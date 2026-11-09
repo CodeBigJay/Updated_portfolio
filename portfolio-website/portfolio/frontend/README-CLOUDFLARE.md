@@ -25,7 +25,7 @@ Add these production secrets under Settings → Variables and Secrets:
 - `SESSION_SECRET`: a separate random secret with at least 32 random bytes.
 - `GITHUB_TOKEN`: a fine-grained GitHub personal access token restricted to this repository, with **Contents: Read and write** permission. Repository metadata read access is normally included automatically.
 
-Never put these secrets in GitHub, source files, frontend code, chat messages, or Vite `VITE_` variables. Add the same `GITHUB_TOKEN` secret to Preview only if you intend to test uploads on preview deployments.
+Never put these secrets in GitHub, source files, frontend code, chat messages, or Vite `VITE_` variables. To test uploads on a preview deployment safely, add `GITHUB_TOKEN` as a Preview secret and set the Preview variable `GITHUB_BRANCH` to `feature/github-portfolio-uploads`. For production, leave `GITHUB_BRANCH` unset (it defaults to `main`). This keeps preview uploads off the live branch.
 
 ## Upload behaviour
 
