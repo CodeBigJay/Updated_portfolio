@@ -1,48 +1,47 @@
-# Portfolio deployment: Cloudflare Pages + D1 + R2
+# Portfolio deployment: Cloudflare Pages + D1 + GitHub asset storage
 
-The public website is a React/Vite static site. Cloudflare Pages Functions provide the small secure API used by the private admin area. D1 stores project metadata; a private R2 bucket stores uploaded images and PDFs.
+The public website is a React/Vite static site. Cloudflare Pages Functions provide the secure API used by the private admin area. D1 stores project metadata. Uploaded images and PDFs are committed to the private GitHub repository under the frontend's `public/uploads/` folder and are then served publicly by Cloudflare Pages.
 
 ## Cloudflare resources
 
-Create these resources in the same Cloudflare account:
-
-1. Pages project connected to this GitHub repository. Root directory: `portfolio/frontend` (adjust if your repository root differs). Build command: `npm run build`; output directory: `dist`.
+1. Pages project connected to this GitHub repository. Set the correct frontend root directory for this repository. Build command: `npm run build`; output directory: `dist`.
 2. D1 database named `mogomotsi-portfolio`.
-3. R2 bucket named `mogomotsi-portfolio-files`.
+
+No R2 bucket is required by this version.
 
 ## D1 migration
 
 Open the D1 database in Cloudflare, choose **Console**, and run the SQL in `migrations/0001_create_projects.sql`.
 
-## Pages bindings
+## Pages bindings and secrets
 
-In Pages project → Settings → Functions → Bindings, add:
+In Pages project → Settings → Functions → Bindings, keep the D1 database binding:
 
-- D1 database binding: variable name `DB`, select `mogomotsi-portfolio`.
-- R2 bucket binding: variable name `PROJECT_FILES`, select `mogomotsi-portfolio-files`.
+- Variable name: `DB`; select `mogomotsi-portfolio`.
 
 Add these production secrets under Settings → Variables and Secrets:
 
 - `ADMIN_PASSWORD`: a long, unique password used only for the portfolio admin login.
 - `SESSION_SECRET`: a separate random secret with at least 32 random bytes.
+- `GITHUB_TOKEN`: a fine-grained GitHub personal access token restricted to this repository, with **Contents: Read and write** permission. Repository metadata read access is normally included automatically.
 
-Do not put either secret in GitHub, source files, or Vite `VITE_` variables. Add the same bindings and secrets to Preview only if you want to test the admin on preview deployments.
+Never put these secrets in GitHub, source files, frontend code, chat messages, or Vite `VITE_` variables. Add the same `GITHUB_TOKEN` secret to Preview only if you intend to test uploads on preview deployments.
 
-## Deploy
-
-Commit and push the updated frontend folder to the branch connected to Pages. Pages will build and deploy the static site and its `functions/` routes. The public site is `/`; the private dashboard is `/admin`.
-
-## Admin features
+## Upload behaviour
 
 - Sign in with `ADMIN_PASSWORD`.
 - Add, edit, publish/unpublish and delete projects.
 - Upload up to six JPG, PNG, WEBP, GIF or PDF files per save; each file is limited to 10 MB.
-- Uploaded files are stored in the private R2 bucket and served through a read-only Pages Function.
+- Files are committed to `portfolio-website/portfolio/frontend/public/uploads/` on the `main` branch.
+- The returned public asset paths are `/uploads/<generated-file-name>`.
+- A GitHub commit triggers a Cloudflare Pages deployment. Newly uploaded files become publicly available after that deployment completes.
+- Deleting a project removes its D1 record but intentionally leaves uploaded files in the repository. This avoids deleting an asset that might still be referenced by another project; unused files can be cleaned up separately.
 
-The session cookie is HttpOnly, Secure and SameSite=Strict, with an eight-hour lifetime. The API rejects cross-origin state-changing requests.
+The upload API requires the GitHub token only on the server. It is never sent to the browser. The session cookie is HttpOnly, Secure and SameSite=Strict, with an eight-hour lifetime. The API rejects cross-origin state-changing requests.
 
 ## Important notes
 
 - The Spring Boot backend and PostgreSQL service are not required for this frontend-only deployment. Keep the old backend folder in GitHub as an archive until the new Pages deployment is verified; it is not used by this site.
-- Cloudflare account usage and plan limits can change. Check the current D1 and R2 pricing/limits before uploading large files or relying on high traffic. This design does not guarantee unlimited free storage or bandwidth.
+- GitHub is being used for a small portfolio asset library, not as general-purpose file hosting. Repository size grows as files are uploaded. Each upload can trigger a Pages build; uploading several files one at a time can trigger several builds.
+- Portfolio assets are public once deployed, even though the source repository remains private.
 - The contact section currently links to public profiles; it does not submit messages to the retired Spring Boot API.
