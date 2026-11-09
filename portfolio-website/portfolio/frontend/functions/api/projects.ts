@@ -15,7 +15,7 @@ export const onRequestGet = async ({ request, env }: Context) => {
   return json((result.results || []).map(mapRow));
 };
 const safeExternalUrl = (value: unknown) => { try { const url = new URL(String(value || '')); return ['https:', 'http:'].includes(url.protocol) ? url.toString() : ''; } catch { return ''; } };
-const safeAssetUrl = (value: unknown) => { const text = String(value || ''); return /^\/api\/files\/[a-f0-9-]{36}\.(jpg|png|webp|gif|pdf)$/.test(text) || safeExternalUrl(text) ? text : ''; };
+const safeAssetUrl = (value: unknown) => { const text = String(value || ''); return /^\/uploads\/[a-f0-9-]{36}\.(jpg|png|webp|gif|pdf)$/.test(text) || safeExternalUrl(text) ? text : ''; };
 export const onRequestPost = async ({ request, env }: Context) => {
   const denied = await requireAdmin(request, env); if (denied) return denied;
   if (!sameOrigin(request)) return json({ error: 'Invalid request origin.' }, 403);
