@@ -9,6 +9,7 @@ export interface Env {
   ADMIN_PASSWORD: string;
   SESSION_SECRET: string;
   GITHUB_TOKEN: string;
+  GITHUB_BRANCH?: string;
 }
 export interface Context { request: Request; env: Env; params: Record<string, string>; }
 export const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' } });
