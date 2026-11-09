@@ -9,7 +9,7 @@ const ALLOWED = new Map([
 ]);
 const OWNER = 'CodeBigJay';
 const REPOSITORY = 'Updated_portfolio';
-const BRANCH = 'main';
+const DEFAULT_BRANCH = 'main';
 const UPLOAD_DIRECTORY = 'portfolio-website/portfolio/frontend/public/uploads';
 
 function toBase64(bytes: Uint8Array) {
@@ -53,7 +53,7 @@ export const onRequestPost = async ({ request, env }: Context) => {
       body: JSON.stringify({
         message: `Add portfolio asset ${key}`,
         content: toBase64(bytes),
-        branch: BRANCH,
+        branch: env.GITHUB_BRANCH || DEFAULT_BRANCH,
       }),
     });
 
