@@ -21,7 +21,7 @@ const fallbackContent: SiteContent = {
   contact: {
     intro: 'I’m interested in graduate programmes, internships and junior software development opportunities. If you’re hiring or would like to discuss a project, I’d welcome the conversation.',
     links: [
-      { label: 'LinkedIn', url: 'https://www.linkedin.com/' },
+      { label: 'LinkedIn', url: 'https://www.linkedin.com/in/mogomotsi-sebogo' },
       { label: 'GitHub', url: 'https://github.com/CodeBigJay' },
       { label: 'Portfolio source', url: 'https://github.com/CodeBigJay/Updated_portfolio' },
     ],
