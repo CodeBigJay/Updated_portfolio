@@ -42,29 +42,47 @@ export const onRequestPost = async ({ request, env }: Context) => {
     const key = `${crypto.randomUUID()}.${extension}`;
     const path = `${UPLOAD_DIRECTORY}/${key}`;
     const bytes = new Uint8Array(await file.arrayBuffer());
-    const response = await fetch(`https://api.github.com/repos/${OWNER}/${REPOSITORY}/contents/${path}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: `Add portfolio asset ${key}`,
-        content: toBase64(bytes),
-        branch: env.GITHUB_BRANCH || DEFAULT_BRANCH,
-      }),
-    });
+    let response: Response;
+    try {
+      response = await fetch(`https://api.github.com/repos/${OWNER}/${REPOSITORY}/contents/${path}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: `Add portfolio asset ${key}`,
+          content: toBase64(bytes),
+          branch: env.GITHUB_BRANCH || DEFAULT_BRANCH,
+        }),
+      });
+    } catch {
+      return json({ error: 'Could not connect to GitHub. Please retry.' }, 502);
+    }
 
     if (!response.ok) {
-      const detail = await response.json().catch(() => ({})) as { message?: string };
+      const responseText = await response.text().catch(() => '');
+      let githubMessage = responseText;
+      try {
+        const parsed = JSON.parse(responseText) as { message?: string };
+        githubMessage = parsed.message || responseText;
+      } catch {
+        // Keep the response text when GitHub did not return JSON.
+      }
       const message = response.status === 401 || response.status === 403
-        ? 'GitHub rejected the upload credential or its permissions. Check the GITHUB_TOKEN secret.'
-        : response.status === 409
-          ? 'GitHub reported a file conflict. Please retry the upload.'
-          : 'GitHub could not store the file. Please try again.';
-      return json({ error: message, detail: detail.message || undefined }, response.status === 401 || response.status === 403 ? 502 : 502);
+        ? 'GitHub rejected the upload credential or its permissions.'
+        : response.status === 404
+          ? 'GitHub could not find the repository or target branch.'
+          : response.status === 409
+            ? 'GitHub reported a file conflict. Please retry the upload.'
+            : 'GitHub could not store the file. Please try again.';
+      return json({
+        error: message,
+        githubStatus: response.status,
+        detail: githubMessage.slice(0, 500) || 'GitHub returned an empty error response.',
+      }, 502);
     }
 
     uploaded.push({ url: `/uploads/${key}`, name: file.name.slice(0, 150), contentType: file.type });
