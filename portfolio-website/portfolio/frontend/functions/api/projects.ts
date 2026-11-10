@@ -10,8 +10,8 @@ export const onRequestGet = async ({ request, env }: Context) => {
   const all = new URL(request.url).searchParams.get('all') === '1';
   if (all) { const denied = await requireAdmin(request, env); if (denied) return denied; }
   const result = all
-    ? await env.DB.prepare('SELECT * FROM projects ORDER BY featured DESC, created_at DESC').all<Record<string, unknown>>()
-    : await env.DB.prepare('SELECT * FROM projects WHERE published = 1 ORDER BY featured DESC, created_at DESC').all<Record<string, unknown>>();
+    ? await env.DB.prepare('SELECT * FROM projects WHERE id != ? ORDER BY featured DESC, created_at DESC').bind('__portfolio_site_content__').all<Record<string, unknown>>()
+    : await env.DB.prepare('SELECT * FROM projects WHERE published = 1 AND id != ? ORDER BY featured DESC, created_at DESC').bind('__portfolio_site_content__').all<Record<string, unknown>>();
   return json((result.results || []).map(mapRow));
 };
 const safeExternalUrl = (value: unknown) => { try { const url = new URL(String(value || '')); return ['https:', 'http:'].includes(url.protocol) ? url.toString() : ''; } catch { return ''; } };
