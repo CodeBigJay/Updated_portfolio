@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import type { Project } from '../types';
+import SiteContentEditor from './SiteContentEditor';
 
 type Asset = { url: string; name: string; contentType: string };
 type Draft = {
@@ -125,6 +126,7 @@ export default function AdminPage() {
       </form>
     </div>
     <section className="admin-section admin-card"><div className="admin-heading-row"><div><p className="eyebrow">Your library</p><h2>Manage projects</h2></div></div><div className="admin-project-list">{projects.length ? projects.map((project) => <article className="admin-project" key={project.id}><div><h3>{project.title}</h3><p>{project.published ? 'Published' : 'Draft'} · {project.category || 'Uncategorised'} · {(project.techStack || []).join(', ')}</p></div><div className="admin-actions"><button className="admin-button secondary" onClick={() => editProject(project)}>Edit</button><button className="admin-button danger" onClick={() => deleteProject(project.id)}>Delete</button></div></article>) : <p className="admin-muted">No projects yet. Add your first project above.</p>}</div></section>
-    <p className="admin-muted" style={{ textAlign: 'center', marginTop: 25 }}>Project details are stored in Cloudflare D1. Uploaded files are stored in your private GitHub repository and served publicly by your portfolio.</p>
+    <SiteContentEditor />
+    <p className="admin-muted" style={{ textAlign: 'center', marginTop: 25 }}>Project details and website content are stored in Cloudflare D1. Uploaded files are stored in your private GitHub repository and served publicly by your portfolio.</p>
   </div></div>;
 }
