@@ -10,7 +10,7 @@ import Skills from './sections/Skills';
 import AdminPage from './sections/AdminPage';
 
 export default function App() {
-  const { projects, skills, experience } = usePortfolioData();
+  const { projects, skills, experience, education, about, contact } = usePortfolioData();
   if (window.location.pathname.startsWith('/admin')) return <AdminPage />;
 
   return (
@@ -18,11 +18,11 @@ export default function App() {
       <NavBar />
       <main>
         <Hero />
-        <About />
+        <About content={about} />
         <Skills skills={skills} />
-        <Experience experience={experience} />
+        <Experience experience={experience} education={education} />
         <Projects projects={projects} />
-        <Contact />
+        <Contact content={contact} />
       </main>
       <Footer />
     </div>

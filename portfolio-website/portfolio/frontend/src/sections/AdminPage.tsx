@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import type { Project } from '../types';
+import SiteContentEditor from './SiteContentEditor';
 
 type Asset = { url: string; name: string; contentType: string };
 type Draft = {
@@ -109,7 +110,7 @@ export default function AdminPage() {
   }
 
   if (checking) return <div className="admin-shell"><div className="admin-wrap admin-muted">Preparing your workspace…</div></div>;
-  if (!authenticated) return <div className="admin-shell"><div className="admin-wrap"><div className="admin-login admin-card"><a className="admin-back" href="/">← Back to portfolio</a><p className="eyebrow" style={{ marginTop: 35 }}>Private workspace</p><h1>Welcome back.</h1><p className="admin-muted">Sign in to manage your projects, images and supporting documents.</p><form className="admin-form" onSubmit={login}><div className="admin-field"><label htmlFor="admin-password">Admin password</label><input id="admin-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required /></div>{error && <div className="admin-alert error" role="alert">{error}</div>}<button className="admin-button" disabled={busy}>{busy ? 'Signing in…' : 'Sign in to dashboard'}</button></form></div></div></div>;
+  if (!authenticated) return <div className="admin-shell"><div className="admin-wrap"><div className="admin-login admin-card"><a className="admin-back" href="/">← Back to portfolio</a><p className="eyebrow" style={{ marginTop: 35 }}>Private workspace</p><h1>Welcome back.</h1><p className="admin-muted">Sign in to manage projects, skills, experience, education, your About section and contact links.</p><form className="admin-form" onSubmit={login}><div className="admin-field"><label htmlFor="admin-password">Admin password</label><input id="admin-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required /></div>{error && <div className="admin-alert error" role="alert">{error}</div>}<button className="admin-button" disabled={busy}>{busy ? 'Signing in…' : 'Sign in to dashboard'}</button></form></div></div></div>;
 
   return <div className="admin-shell"><div className="admin-wrap"><div className="admin-top"><div className="admin-brand">Mogomotsi Sebogo<span>Portfolio management</span></div><div className="admin-actions"><a className="admin-button secondary" href="/">View website ↗</a><button className="admin-button secondary" onClick={logout}>Sign out</button></div></div>
     <div className="admin-card"><div className="admin-heading-row"><div><p className="eyebrow">Content studio</p><h1>{draft.id ? 'Edit project' : 'Add a project'}</h1><p className="admin-muted">Create a project entry, attach visuals or PDFs, and publish it to your public portfolio.</p></div><span className="featured-label">{projects.length} {projects.length === 1 ? 'project' : 'projects'} total</span></div>
@@ -125,6 +126,7 @@ export default function AdminPage() {
       </form>
     </div>
     <section className="admin-section admin-card"><div className="admin-heading-row"><div><p className="eyebrow">Your library</p><h2>Manage projects</h2></div></div><div className="admin-project-list">{projects.length ? projects.map((project) => <article className="admin-project" key={project.id}><div><h3>{project.title}</h3><p>{project.published ? 'Published' : 'Draft'} · {project.category || 'Uncategorised'} · {(project.techStack || []).join(', ')}</p></div><div className="admin-actions"><button className="admin-button secondary" onClick={() => editProject(project)}>Edit</button><button className="admin-button danger" onClick={() => deleteProject(project.id)}>Delete</button></div></article>) : <p className="admin-muted">No projects yet. Add your first project above.</p>}</div></section>
-    <p className="admin-muted" style={{ textAlign: 'center', marginTop: 25 }}>Project details are stored in Cloudflare D1. Uploaded files are stored in your private GitHub repository and served publicly by your portfolio.</p>
+    <SiteContentEditor />
+    <p className="admin-muted" style={{ textAlign: 'center', marginTop: 25 }}>Project details and website content are stored in Cloudflare D1. Uploaded files are stored in your private GitHub repository and served publicly by your portfolio.</p>
   </div></div>;
 }
