@@ -4,7 +4,7 @@ export default function About() {
   return (
     <section id="about" className="section section-about">
       <div className="container about-grid">
-        <SectionHeading eyebrow="About me" title="A technical foundation.\nA practical mindset." />
+        <SectionHeading eyebrow="About me" title={`A technical foundation.\nA practical mindset.`} />
         <div className="about-copy">
           <p className="lead-copy">I’m a Computer Science and Electronics graduate from North-West University, interested in building technology that makes everyday work simpler and more effective.</p>
           <p>My studies gave me a foundation in programming, databases, software engineering and electronics. Alongside my technical projects, my experience in tutoring and classroom supervision has strengthened my communication, organisation and ability to explain ideas clearly.</p>
