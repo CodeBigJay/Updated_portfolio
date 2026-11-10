@@ -12,7 +12,7 @@ const DEFAULT_CONTENT = {
   contact: {
     intro: 'I’m interested in graduate programmes, internships and junior software development opportunities. If you’re hiring or would like to discuss a project, I’d welcome the conversation.',
     links: [
-      { label: 'LinkedIn', url: 'https://www.linkedin.com/' },
+      { label: 'LinkedIn', url: 'https://www.linkedin.com/in/mogomotsi-sebogo' },
       { label: 'GitHub', url: 'https://github.com/CodeBigJay' },
       { label: 'Portfolio source', url: 'https://github.com/CodeBigJay/Updated_portfolio' },
     ],
@@ -23,8 +23,10 @@ const DEFAULT_CONTENT = {
     { id: 3, name: 'C++', category: 'Programming', proficiency: 3, displayOrder: 3 },
     { id: 4, name: 'SQL', category: 'Data', proficiency: 4, displayOrder: 4 },
     { id: 5, name: 'PostgreSQL', category: 'Data', proficiency: 3, displayOrder: 5 },
-    { id: 6, name: 'HTML & CSS', category: 'Web', proficiency: 4, displayOrder: 6 },
-    { id: 7, name: 'Git', category: 'Tools', proficiency: 3, displayOrder: 7 },
+    { id: 6, name: 'React', category: 'Web', proficiency: 3, displayOrder: 6 },
+    { id: 7, name: 'TypeScript', category: 'Web', proficiency: 3, displayOrder: 7 },
+    { id: 8, name: 'HTML & CSS', category: 'Web', proficiency: 4, displayOrder: 8 },
+    { id: 9, name: 'Git', category: 'Tools', proficiency: 3, displayOrder: 9 },
   ],
   experience: [
     { id: 1, title: 'Class Supervisor', organization: "King's Way Christian School", description: 'Supported classroom coordination and helped maintain an organised learning environment.', startDate: '2025-01-01', endDate: null, displayOrder: 1 },
