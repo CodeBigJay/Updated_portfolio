@@ -10,7 +10,21 @@ function formatDate(value: string | null) {
 export default function Experience({ experience }: { experience: ExperienceItem[] }) {
   return (
     <section id="experience" className="section">
-      <div className="container experience-layout"><SectionHeading eyebrow="The journey so far" title="Learning through\nevery chapter." /><div className="timeline">{experience.map((item) => <article className="timeline-item" key={item.id}><div className="timeline-date">{formatDate(item.startDate)} — {formatDate(item.endDate)}</div><div><h3>{item.title}</h3><p className="timeline-org">{item.organization}</p><p className="timeline-description">{item.description}</p></div></article>)}</div></div>
+      <div className="container experience-layout">
+        <SectionHeading eyebrow="Experience & education" title="Learning by doing.\nGrowing with purpose." />
+        <div className="timeline">
+          {experience.map((item) => (
+            <article className="timeline-item" key={item.id}>
+              <div className="timeline-date">{formatDate(item.startDate)} — {formatDate(item.endDate)}</div>
+              <div>
+                <h3>{item.title}</h3>
+                <p className="timeline-org">{item.organization}</p>
+                <p className="timeline-description">{item.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
