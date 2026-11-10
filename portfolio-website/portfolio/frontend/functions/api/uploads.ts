@@ -49,6 +49,7 @@ export const onRequestPost = async ({ request, env }: Context) => {
         headers: {
           Authorization: `Bearer ${env.GITHUB_TOKEN}`,
           Accept: 'application/vnd.github+json',
+          'User-Agent': 'MogomotsiPortfolio/1.0',
           'X-GitHub-Api-Version': '2022-11-28',
           'Content-Type': 'application/json',
         },
