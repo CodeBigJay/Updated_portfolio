@@ -4,13 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: '#f8f8f5',
-        panel: '#f0f2ed',
-        border: '#e3e8e0',
-        ink: '#202b2a',
-        muted: '#77827a',
-        accent: '#668b78',
-        deep: '#263d34',
+        bg: '#f5f9fc',
+        panel: '#edf5fa',
+        border: '#dce8f0',
+        ink: '#102235',
+        muted: '#64788a',
+        accent: '#08bfe5',
+        deep: '#071827',
       },
       fontFamily: {
         display: ['Manrope', 'sans-serif'],
