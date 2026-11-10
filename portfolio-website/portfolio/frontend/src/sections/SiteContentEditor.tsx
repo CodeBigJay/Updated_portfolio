@@ -30,9 +30,9 @@ export default function SiteContentEditor() {
       .finally(() => setLoading(false));
   }, []);
   const update = (section: 'about' | 'contact', key: string, value: unknown) =>
-    setContent((old) => ({ ...old, [section]: { ...old[section], [key]: value } }));
+    setContent((old) => ({ ...old, [section]: { ...old[section], [key]: value } } as SiteContent));
   const updateRow = (key: 'skills' | 'experience' | 'education', index: number, field: string, value: unknown) =>
-    setContent((old) => ({ ...old, [key]: old[key].map((row: any, i) => i === index ? { ...row, [field]: value } : row) }));
+    setContent((old) => ({ ...old, [key]: old[key].map((row: any, i) => i === index ? { ...row, [field]: value } : row) } as SiteContent));
   const addRow = (key: 'skills' | 'experience' | 'education') => {
     setContent((old) => {
       const id = Math.max(0, ...old[key].map((row: any) => Number(row.id) || 0)) + 1;
@@ -45,7 +45,7 @@ export default function SiteContentEditor() {
     });
   };
   const removeRow = (key: 'skills' | 'experience' | 'education', index: number) =>
-    setContent((old) => ({ ...old, [key]: old[key].filter((_, i) => i !== index) }));
+    setContent((old) => ({ ...old, [key]: old[key].filter((_, i) => i !== index) } as SiteContent));
   async function save() {
     setSaving(true); setError(''); setMessage('');
     try {
@@ -78,7 +78,7 @@ export default function SiteContentEditor() {
       {content.experience.map((item,i)=><div className="admin-entry" key={item.id}>
         <div className="admin-row"><div className="admin-field"><label>Role / position</label><input value={item.title} onChange={e=>updateRow('experience',i,'title',e.target.value)} /></div><div className="admin-field"><label>Organisation</label><input value={item.organization} onChange={e=>updateRow('experience',i,'organization',e.target.value)} /></div></div>
         <div className="admin-field"><label>Description</label><textarea value={item.description} onChange={e=>updateRow('experience',i,'description',e.target.value)} /></div>
-        <div className="admin-row"><div className="admin-field"><label>Start date</label><input type="date" value={item.startDate || ''} onChange={e=>updateRow('experience',i,'startDate',e.target.value)} /></div><div className="admin-field"><label>End date (leave blank if current)</label><input type="date" value={item.endDate || ''} onChange={e=>updateRow('experience',i,'endDate',e.target.value || null)} /></div></div>
+        <div className="admin-row"><div className="admin-field"><label>Start date</label><input type="date" required value={item.startDate || ''} onChange={e=>updateRow('experience',i,'startDate',e.target.value)} /></div><div className="admin-field"><label>End date (leave blank if current)</label><input type="date" value={item.endDate || ''} onChange={e=>updateRow('experience',i,'endDate',e.target.value || null)} /></div></div>
         <button type="button" className="admin-button danger" onClick={()=>removeRow('experience',i)}>Remove experience</button>
       </div>)}
       <button type="button" className="admin-button secondary" onClick={()=>addRow('experience')}>+ Add experience</button>
@@ -88,7 +88,7 @@ export default function SiteContentEditor() {
       {content.education.map((item,i)=><div className="admin-entry" key={item.id}>
         <div className="admin-row"><div className="admin-field"><label>Qualification</label><input value={item.qualification} onChange={e=>updateRow('education',i,'qualification',e.target.value)} /></div><div className="admin-field"><label>Institution</label><input value={item.institution} onChange={e=>updateRow('education',i,'institution',e.target.value)} /></div></div>
         <div className="admin-field"><label>Description</label><textarea value={item.description} onChange={e=>updateRow('education',i,'description',e.target.value)} /></div>
-        <div className="admin-row"><div className="admin-field"><label>Start date</label><input type="date" value={item.startDate || ''} onChange={e=>updateRow('education',i,'startDate',e.target.value)} /></div><div className="admin-field"><label>End date</label><input type="date" value={item.endDate || ''} onChange={e=>updateRow('education',i,'endDate',e.target.value || null)} /></div></div>
+        <div className="admin-row"><div className="admin-field"><label>Start date</label><input type="date" required value={item.startDate || ''} onChange={e=>updateRow('education',i,'startDate',e.target.value)} /></div><div className="admin-field"><label>End date</label><input type="date" value={item.endDate || ''} onChange={e=>updateRow('education',i,'endDate',e.target.value || null)} /></div></div>
         <button type="button" className="admin-button danger" onClick={()=>removeRow('education',i)}>Remove education</button>
       </div>)}
       <button type="button" className="admin-button secondary" onClick={()=>addRow('education')}>+ Add education</button>
