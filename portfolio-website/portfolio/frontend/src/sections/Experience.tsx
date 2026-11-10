@@ -11,7 +11,7 @@ export default function Experience({ experience }: { experience: ExperienceItem[
   return (
     <section id="experience" className="section">
       <div className="container experience-layout">
-        <SectionHeading eyebrow="Experience & education" title="Learning by doing.\nGrowing with purpose." />
+        <SectionHeading eyebrow="Experience & education" title={`Learning by doing.\nGrowing with purpose.`} />
         <div className="timeline">
           {experience.map((item) => (
             <article className="timeline-item" key={item.id}>
