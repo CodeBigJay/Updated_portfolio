@@ -1,6 +1,6 @@
 import { json, requireAdmin, sameOrigin, type Context } from '../../_shared';
 const safeExternalUrl = (value: unknown) => { try { const url = new URL(String(value || '')); return ['https:', 'http:'].includes(url.protocol) ? url.toString() : ''; } catch { return ''; } };
-const safeAssetUrl = (value: unknown) => { const text = String(value || ''); return /^\/api\/files\/[a-f0-9-]{36}\.(jpg|png|webp|gif|pdf)$/.test(text) || safeExternalUrl(text) ? text : ''; };
+const safeAssetUrl = (value: unknown) => { const text = String(value || ''); return /^\/uploads\/[a-f0-9-]{36}\.(jpg|png|webp|gif|pdf)$/.test(text) || safeExternalUrl(text) ? text : ''; };
 export const onRequestPut = async ({ request, env, params }: Context) => {
   const denied = await requireAdmin(request, env); if (denied) return denied;
   if (!sameOrigin(request)) return json({ error: 'Invalid request origin.' }, 403);
@@ -14,12 +14,8 @@ export const onRequestPut = async ({ request, env, params }: Context) => {
 export const onRequestDelete = async ({ request, env, params }: Context) => {
   const denied = await requireAdmin(request, env); if (denied) return denied;
   if (!sameOrigin(request)) return json({ error: 'Invalid request origin.' }, 403);
-  const existing = await env.DB.prepare('SELECT image_url,gallery,documents FROM projects WHERE id=?').bind(params.id).all<Record<string, unknown>>();
-  if (!existing.results.length) return json({ error: 'Project not found.' }, 404);
-  const row = existing.results[0];
-  const urls = [String(row.image_url || ''), ...JSON.parse(String(row.gallery || '[]')), ...JSON.parse(String(row.documents || '[]')).map((doc: { url?: string }) => doc.url || '')];
-  const keys = urls.map((url) => String(url).match(/^\/api\/files\/([a-f0-9-]{36}\.(?:jpg|png|webp|gif|pdf))$/)?.[1]).filter((key): key is string => Boolean(key));
-  await Promise.all(keys.map((key) => env.PROJECT_FILES.delete(key)));
-  await env.DB.prepare('DELETE FROM projects WHERE id=?').bind(params.id).run();
+  const result = await env.DB.prepare('DELETE FROM projects WHERE id=?').bind(params.id).run();
+  if (!result.meta.changes) return json({ error: 'Project not found.' }, 404);
+  // Uploaded assets remain in the repository so deleting a project cannot break a file shared elsewhere.
   return json({ deleted: true });
 };
