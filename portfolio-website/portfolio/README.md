@@ -1,95 +1,113 @@
 # Portfolio Website — Mogomotsi Sebogo
 
-Full-stack personal portfolio: a Spring Boot REST API backed by PostgreSQL,
-and a React 19 + TypeScript + Vite frontend, containerized with Docker.
+A full-stack personal portfolio application with a React frontend and a Spring Boot REST API backed by PostgreSQL. The repository is organised into separate frontend and backend applications and includes a Docker Compose setup for local development.
 
-```
+## Technology
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS |
+| Backend | Java 21, Spring Boot, Maven |
+| Persistence | Spring Data JPA, PostgreSQL |
+| Authentication | Spring Security, JWT |
+| Local environment | Docker Compose |
+
+## Architecture
+
+```text
 portfolio/
-├── backend/    Spring Boot API (Java 21, Maven, JPA, JWT auth)
-├── frontend/   React + TypeScript + Vite + Tailwind
-└── docker-compose.yml
+├── backend/          Spring Boot REST API
+├── frontend/         React + TypeScript application
+└── docker-compose.yml Local multi-service environment
 ```
 
-## What's included
+The frontend communicates with the backend through HTTP API requests. The backend contains the persistence and authentication layers.
 
-- **Projects, Skills, Experience** — served from the database via REST, with
-  starter content pre-seeded so the site isn't empty on first run.
-- **Contact form** — POSTs to `/api/contact` and stores messages in the DB.
-- **JWT-based admin auth** — `/api/auth/login` issues a token; project
-  create/update/delete endpoints require it (see `SecurityConfig.java`).
-  Default admin credentials are `admin` / `changeme123` — **change these**
-  before deploying (see Configuration below).
-- **Graceful fallback** — if the frontend can't reach the API, it falls back
-  to local placeholder data instead of showing an empty page.
+## Main areas
 
-## Quick start (Docker — recommended)
+The current implementation includes:
 
-Requires Docker and Docker Compose.
+- Portfolio content for projects, skills and experience
+- A contact form endpoint
+- An administrative sign-in flow and protected content-management endpoints
+- Database-backed content with starter/fallback content
+- Docker Compose configuration for local development
+
+Refer to the source code for the exact behaviour and current implementation details.
+
+## Requirements
+
+- Docker Desktop with Docker Compose v2, or
+- Java 21 and Maven for the backend
+- Node.js 20+ and npm for the frontend
+- PostgreSQL when running with the PostgreSQL configuration
+
+## Run with Docker Compose
+
+From this directory:
 
 ```bash
 docker compose up --build
 ```
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8080/api
-- Postgres: localhost:5432 (user/pass: `portfolio`/`portfolio`)
+The Compose configuration publishes the frontend and backend on their configured local ports. Check `docker-compose.yml` for the current port mappings.
 
-## Running locally without Docker
+To stop the services:
+
+```bash
+docker compose down
+```
+
+## Run services separately
 
 ### Backend
 
-Requires Java 21 and Maven.
+From the backend directory:
 
 ```bash
-cd backend
 mvn spring-boot:run
 ```
 
-Runs on the `dev` profile by default, using an in-memory H2 database — no
-Postgres setup needed for local development. API available at
-`http://localhost:8080/api`.
+Review the Spring configuration to select the intended local profile and database. The development profile may use an in-memory database; the container configuration uses PostgreSQL.
 
 ### Frontend
 
-Requires Node 20+.
+From the frontend directory:
+
+```bash
+npm install
+npm run dev
+```
+
+Use the frontend's environment configuration to point it to the backend API when the default development proxy is not suitable.
+
+## Configuration and security
+
+Configure database credentials, admin credentials, JWT signing material and frontend API origins through local environment variables or a deployment platform's secret manager.
+
+**Do not use development credentials or placeholder JWT secrets in a public deployment.** Do not publish passwords, tokens, private keys, database dumps or real contact submissions. If a real secret has ever been committed to Git history, rotate it; removing it in a later commit does not make the old value safe.
+
+The Docker Compose file and local defaults are intended for development. Review the production profile, database access, HTTPS, CORS and admin authorization before deploying.
+
+## Verification
+
+Run the backend tests:
+
+```bash
+cd backend
+mvn test
+```
+
+Build the frontend:
 
 ```bash
 cd frontend
 npm install
-cp .env.example .env   # adjust VITE_API_BASE_URL if needed
-npm run dev
+npm run build
 ```
 
-Runs at `http://localhost:5173` and proxies `/api` requests to the backend.
+Also verify the contact form, data loading, admin authentication and protected operations locally with test data. Do not describe a check as passing until it has been run successfully.
 
-## Configuration
+## Further guidance
 
-Backend settings are in `backend/src/main/resources/application.yml`, all
-overridable via environment variables:
-
-| Variable | Purpose | Default (dev) |
-|---|---|---|
-| `JWT_SECRET` | Signs admin auth tokens — set a long random value in production | placeholder |
-| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Admin login for protected endpoints | `admin` / `changeme123` |
-| `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` | Postgres connection (prod profile) | see `docker-compose.yml` |
-
-Frontend: `frontend/.env` — `VITE_API_BASE_URL` (defaults to
-`http://localhost:8080/api`).
-
-## Customizing content
-
-Fastest path: edit the starter data in
-`backend/src/main/java/com/mogomotsi/portfolio/config/DataSeeder.java`
-(only seeds on first run — drop the database/volume to re-seed), and update
-the fallback data in `frontend/src/data/fallback.ts` to match.
-
-Longer term: log in via `POST /api/auth/login`, then use the returned JWT
-as a `Bearer` token to `POST`/`PUT`/`DELETE` `/api/projects`.
-
-## Deploying
-
-- **Backend**: any host that runs a Docker container or a JAR (Render,
-  Railway, Fly.io, a VPS). Point it at a managed Postgres instance.
-- **Frontend**: the built `dist/` folder is static — Vercel, Netlify, or
-  the included nginx Docker image all work. Set `VITE_API_BASE_URL` to
-  your deployed backend's URL at build time.
+See [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) for the project verification, deployment-security and portfolio-polish checklist.
